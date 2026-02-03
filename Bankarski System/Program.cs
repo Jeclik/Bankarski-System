@@ -2,16 +2,27 @@
 using MySql.Data;
 using MySql.Data.MySqlClient;
 
-class Program
+public class Program
 {
-    public void Data()
-    {
-        string connection = "server = 127.0.0.1; database = mojzo; user = root; password = ;";
-        MySqlConnection conn = new MySqlConnection(connection);
-
-    }
     public static void Main(string[] args)
     {
-        Console.WriteLine("Hello");
+        Console.WriteLine("Welcome to the Bank pls choose one");
+        Console.WriteLine("1. Register");
+        Console.WriteLine("2. Login");
+        Console.Write("Enter your choice: ");
+        string choice = Console.ReadLine();
+        switch(choice)
+        {
+            case "1":
+                Register.Registration();
+                break;
+            case "2":
+                // Traits change this to Login
+                break;
+            default:
+                Console.WriteLine("Invalid choice. Please try again.");
+                break;
+
+        }
     }
 }
