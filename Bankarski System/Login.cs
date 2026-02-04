@@ -9,29 +9,36 @@ public class Login
 {
     public static void LoginClass()
     {
+        //connection string
+        string connection = "server = 127.0.0.1; database = banka; user = root; password = ;";
+        MySqlConnection conn = new MySqlConnection(connection);
 
+        //login
         Console.WriteLine("\n");
         Console.WriteLine("Please Login: ");
 
-        Console.Write("Username: ");
+        Console.Write("Name: ");
         string ime = Console.ReadLine();
 
-        Console.Write("Password: ");
+        Console.Write("Last name: ");
         string prez = Console.ReadLine();
+
+        Console.Write("Email: ");
+        string email = Console.ReadLine();
+
+        Console.Write("Password: ");
+        string pass = Console.ReadLine();
         Console.WriteLine("\n");
 
-        if (ime == "")
+        //validation
+        if (ime == null || prez == null || email == null || pass == null)
         {
-            Console.WriteLine("No Username!");
+            Console.WriteLine("All fields are required!");
+            LoginClass();
         }
-        else if (prez == "")
-        {
-            Console.WriteLine("No Password!");
-        }
+        //if all filds are filled, check in database
         else
         {
-            string connection = "server = 127.0.0.1; database = banka; user = root; password = ;";
-            MySqlConnection conn = new MySqlConnection(connection);
             conn.Open();
 
             string Select = "SELECT* FROM korisnici WHERE ime=@ime AND prez=@prezime";
@@ -41,13 +48,15 @@ public class Login
 
             MySqlDataReader reader = command.ExecuteReader();
             {
-                if (reader.Read())
+                if (reader.HasRows)
                 {
+                    //success message
                     Console.WriteLine("Login successful!");
 
                 }
                 else
                 {
+                    //failure message, and restart login
                     Console.WriteLine("Login failed! Invalid username or password.");
                     LoginClass();
                 }

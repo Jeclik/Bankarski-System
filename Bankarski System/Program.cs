@@ -17,10 +17,7 @@ public class Program
                 Register.Registration();
                 break;
             case "2":
-                // Traits change this to Login
-                /* Evo brate */
                 Login.LoginClass();
-
                 break;
             default:
                 Console.WriteLine("Invalid choice. Please try again.");
