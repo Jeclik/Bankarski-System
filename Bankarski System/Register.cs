@@ -25,10 +25,12 @@ public class Register
         Console.Write("Password: ");
         string pass = Console.ReadLine();
 
+        string emp = "no";
+
         //validation
-        if (ime == null || prez == null|| email == null || pass == null)
+        if (string.IsNullOrWhiteSpace(ime) || string.IsNullOrWhiteSpace(prez) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(pass))
         {
-            Console.WriteLine("All fields are required!");
+            Console.WriteLine("All fields are required and cen't have a space it them!");
             Registration();
         }
         //if all filds are filled, insertion to database
@@ -36,17 +38,18 @@ public class Register
         {
             conn.Open();
 
-            string insert = "INSERT INTO korisnici (ime, prezime, password) VALUES (@ime, @prez, @pass)";
+            string insert = "INSERT INTO korisnici (ime, prezime, email, password, employee) VALUES (@ime, @prez, @email, @pass, @emp)";
             MySqlCommand cmd = new MySqlCommand(insert, conn);
 
             cmd.Parameters.AddWithValue("@ime", ime);
             cmd.Parameters.AddWithValue("@prez", prez);
             cmd.Parameters.AddWithValue("@email", email);
             cmd.Parameters.AddWithValue("@pass", pass);
+            cmd.Parameters.AddWithValue("@emp", emp);
             cmd.ExecuteNonQuery();
             conn.Close();
         }
         //success message
-        Console.WriteLine("You have sucessfuly loged in.");
+        Console.WriteLine("You have sucessfuly registrated.");
     }
 }

@@ -13,6 +13,9 @@ public class Login
         string connection = "server = 127.0.0.1; database = banka; user = root; password = ;";
         MySqlConnection conn = new MySqlConnection(connection);
 
+        //string for checking if the login was succesfule and then used for checking roles
+        string login = "";
+
         //login
         Console.WriteLine("\n");
         Console.WriteLine("Please Login: ");
@@ -31,9 +34,9 @@ public class Login
         Console.WriteLine("\n");
 
         //validation
-        if (ime == null || prez == null || email == null || pass == null)
+        if (string.IsNullOrWhiteSpace(ime) || string.IsNullOrWhiteSpace(prez) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(pass))
         {
-            Console.WriteLine("All fields are required!");
+            Console.WriteLine("All fields are required and cen't have a space in them!");
             LoginClass();
         }
         //if all filds are filled, check in database
@@ -41,10 +44,12 @@ public class Login
         {
             conn.Open();
 
-            string Select = "SELECT* FROM korisnici WHERE ime=@ime AND prez=@prezime";
+            string Select = "SELECT* FROM korisnici WHERE ime = @ime AND prezime = @prez AND email = @email AND @password = @pass";
             MySqlCommand command = new MySqlCommand(Select, conn);
             command.Parameters.AddWithValue("@ime", ime);
-            command.Parameters.AddWithValue("@prezime", prez);
+            command.Parameters.AddWithValue("@prez", prez);
+            command.Parameters.AddWithValue("@email", email);
+            command.Parameters.AddWithValue("@pass", pass);
 
             MySqlDataReader reader = command.ExecuteReader();
             {
@@ -52,16 +57,33 @@ public class Login
                 {
                     //success message
                     Console.WriteLine("Login successful!");
-
+                    login = "success";
                 }
                 else
                 {
                     //failure message, and restart login
                     Console.WriteLine("Login failed! Invalid username or password.");
+                    login = "failed";
                     LoginClass();
                 }
             }
             conn.Close();
+
+            //employee and role check (in progress, DON'T TOUCH!)
+
+            /*
+            switch (login)
+            {
+                case "success":
+                    string empcheck = "SELECT* FROM korisnici WHERE ime = @ime AND prezime = @prez AND employee = @emp";
+                    MySqlCommand cmd = new MySqlCommand(empcheck, conn);
+                    cmd.Parameters.AddWithValue("@ime", ime);
+                    cmd.Parameters.AddWithValue("@prez", prez);
+                    cmd.Parameters.AddWithValue("@emp", emp);
+                    break;
+            }
+            */
+
         }
     }
 }
