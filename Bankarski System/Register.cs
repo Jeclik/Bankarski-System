@@ -12,44 +12,52 @@ public class Register
     {
         //connection string
         string connection = "server = 127.0.0.1; database = banka; user = root; password = ;";
-        MySqlConnection conn = new MySqlConnection(connection);
 
         //registration
-        Console.WriteLine("Welcome to the bank registration.");
-        Console.Write("Name: ");
-        string ime = Console.ReadLine();
-        Console.Write("Last name: ");
-        string prez = Console.ReadLine();
-        Console.Write("Email: ");
-        string email = Console.ReadLine();
-        Console.Write("Password: ");
-        string pass = Console.ReadLine();
-
-        string emp = "no";
-
-        //validation
-        if (string.IsNullOrWhiteSpace(ime) || string.IsNullOrWhiteSpace(prez) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(pass))
+        while (true)
         {
-            Console.WriteLine("All fields are required and cen't have a space it them!");
-            Registration();
-        }
-        //if all filds are filled, insertion to database
-        else
-        {
-            conn.Open();
+            Console.WriteLine("Welcome to the bank registration.");
+            Console.Write("Name: ");
+            string ime = Console.ReadLine();
+            Console.Write("Last name: ");
+            string prez = Console.ReadLine();
+            Console.Write("Email: ");
+            string email = Console.ReadLine();
+            Console.Write("Password: ");
+            string pass = Console.ReadLine();
 
-            string insert = "INSERT INTO korisnici (ime, prezime, email, password, employee) VALUES (@ime, @prez, @email, @pass, @emp)";
-            MySqlCommand cmd = new MySqlCommand(insert, conn);
+            string emp = "no";
 
-            cmd.Parameters.AddWithValue("@ime", ime);
-            cmd.Parameters.AddWithValue("@prez", prez);
-            cmd.Parameters.AddWithValue("@email", email);
-            cmd.Parameters.AddWithValue("@pass", pass);
-            cmd.Parameters.AddWithValue("@emp", emp);
-            cmd.ExecuteNonQuery();
-            conn.Close();
+            //validation
+            if (string.IsNullOrWhiteSpace(ime) || string.IsNullOrWhiteSpace(prez) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(pass))
+            {
+                Console.WriteLine("All fields are required and cen't have a space it them!");
+                continue;
+            }
+
+            //if all filds are filled, insertion to database
+            try
+            {
+                using var conn = new MySqlConnection(connection);
+                conn.Open();
+
+                string insert = "INSERT INTO korisnici (ime, prezime, email, password, employee) VALUES (@ime, @prez, @email, @pass, @emp)";
+                using var cmd = new MySqlCommand(insert, conn);
+
+                cmd.Parameters.AddWithValue("@ime", ime);
+                cmd.Parameters.AddWithValue("@prez", prez);
+                cmd.Parameters.AddWithValue("@email", email);
+                cmd.Parameters.AddWithValue("@pass", pass);
+                cmd.Parameters.AddWithValue("@emp", emp);
+                cmd.ExecuteNonQuery();
+
+                Console.WriteLine("You have sucessfuly registrated.");
+                Login.LoginClass();
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine("Database error: " + ex.Message);
+            }
         }
-        //success message
-        Console.WriteLine("You have sucessfuly registrated.");
     }
 }

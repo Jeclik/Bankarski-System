@@ -11,79 +11,74 @@ public class Login
     {
         //connection string
         string connection = "server = 127.0.0.1; database = banka; user = root; password = ;";
-        MySqlConnection conn = new MySqlConnection(connection);
 
         //string for checking if the login was succesfule and then used for checking roles
         string login = "";
 
-        //login
-        Console.WriteLine("\n");
-        Console.WriteLine("Please Login: ");
-
-        Console.Write("Name: ");
-        string ime = Console.ReadLine();
-
-        Console.Write("Last name: ");
-        string prez = Console.ReadLine();
-
-        Console.Write("Email: ");
-        string email = Console.ReadLine();
-
-        Console.Write("Password: ");
-        string pass = Console.ReadLine();
-        Console.WriteLine("\n");
-
-        //validation
-        if (string.IsNullOrWhiteSpace(ime) || string.IsNullOrWhiteSpace(prez) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(pass))
+        while (true)
         {
-            Console.WriteLine("All fields are required and cen't have a space in them!");
-            LoginClass();
-        }
-        //if all filds are filled, check in database
-        else
-        {
-            conn.Open();
+            //login
+            Console.WriteLine("\n");
+            Console.WriteLine("Please Login: ");
 
-            string Select = "SELECT* FROM korisnici WHERE ime = @ime AND prezime = @prez AND email = @email AND @password = @pass";
-            MySqlCommand command = new MySqlCommand(Select, conn);
-            command.Parameters.AddWithValue("@ime", ime);
-            command.Parameters.AddWithValue("@prez", prez);
-            command.Parameters.AddWithValue("@email", email);
-            command.Parameters.AddWithValue("@pass", pass);
+            Console.Write("Name: ");
+            string ime = Console.ReadLine();
 
-            MySqlDataReader reader = command.ExecuteReader();
+            Console.Write("Last name: ");
+            string prez = Console.ReadLine();
+
+            Console.Write("Email: ");
+            string email = Console.ReadLine();
+
+            Console.Write("Password: ");
+            string pass = Console.ReadLine();
+            Console.WriteLine("\n");
+
+            //validation
+            if (string.IsNullOrWhiteSpace(ime) || string.IsNullOrWhiteSpace(prez) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(pass))
             {
-                if (reader.HasRows)
+                Console.WriteLine("All fields are required and cen't have a space in them!");
+                continue;
+            }
+
+            //if all filds are filled, check in database
+            try
+            {
+                using var conn = new MySqlConnection(connection);
+                conn.Open();
+
+                string select = "SELECT employee FROM korisnici WHERE ime = @ime AND prezime = @prez AND email = @email AND password = @pass";
+                using var cmd = new MySqlCommand(select, conn);
+                cmd.Parameters.AddWithValue("@ime", ime);
+                cmd.Parameters.AddWithValue("@prez", prez);
+                cmd.Parameters.AddWithValue("@email", email);
+                cmd.Parameters.AddWithValue("@pass", pass);
+                object result = cmd.ExecuteScalar();
+
+                if (result == null || result == DBNull.Value)
                 {
-                    //success message
-                    Console.WriteLine("Login successful!");
-                    login = "success";
+                    Console.WriteLine("Login failed! Invalid credentials.");
+                    continue;
                 }
-                else
+                string emp = result.ToString().Trim();
+                Console.WriteLine("Login Successful!");
+
+                switch (emp)
                 {
-                    //failure message, and restart login
-                    Console.WriteLine("Login failed! Invalid username or password.");
-                    login = "failed";
-                    LoginClass();
+                    case "yes":
+                        Console.WriteLine("You are a employee thx for loging in.");
+                        break;
+
+                    case "no":
+                        Console.WriteLine("You are a customre thx for loging in.");
+                        break;
                 }
             }
-            conn.Close();
-
-            //employee and role check (in progress, DON'T TOUCH!)
-
-            /*
-            switch (login)
+            catch (MySqlException ex)
             {
-                case "success":
-                    string empcheck = "SELECT* FROM korisnici WHERE ime = @ime AND prezime = @prez AND employee = @emp";
-                    MySqlCommand cmd = new MySqlCommand(empcheck, conn);
-                    cmd.Parameters.AddWithValue("@ime", ime);
-                    cmd.Parameters.AddWithValue("@prez", prez);
-                    cmd.Parameters.AddWithValue("@emp", emp);
-                    break;
+                Console.WriteLine("Database error: " + ex.Message);
+                break;
             }
-            */
-
         }
     }
 }
