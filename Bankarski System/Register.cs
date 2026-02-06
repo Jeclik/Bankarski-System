@@ -27,6 +27,7 @@ public class Register
             string pass = Console.ReadLine();
 
             string emp = "no";
+            string admin = "no";
 
             //validation
             if (string.IsNullOrWhiteSpace(ime) || string.IsNullOrWhiteSpace(prez) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(pass))
@@ -41,7 +42,7 @@ public class Register
                 using var conn = new MySqlConnection(connection);
                 conn.Open();
 
-                string insert = "INSERT INTO korisnici (ime, prezime, email, password, employee) VALUES (@ime, @prez, @email, @pass, @emp)";
+                string insert = "INSERT INTO korisnici (ime, prezime, email, password, employee, admin) VALUES (@ime, @prez, @email, @pass, @emp, @admin)";
                 using var cmd = new MySqlCommand(insert, conn);
 
                 cmd.Parameters.AddWithValue("@ime", ime);
@@ -49,6 +50,7 @@ public class Register
                 cmd.Parameters.AddWithValue("@email", email);
                 cmd.Parameters.AddWithValue("@pass", pass);
                 cmd.Parameters.AddWithValue("@emp", emp);
+                cmd.Parameters.AddWithValue("@amind", admin);
                 cmd.ExecuteNonQuery();
 
                 Console.WriteLine("You have sucessfuly registrated.");
