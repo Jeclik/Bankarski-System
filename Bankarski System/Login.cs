@@ -51,7 +51,7 @@ public class Login
                 using var conn_admin = new MySqlConnection(connection);
                 conn_admin.Open();
 
-                string select_admin = "SELECT admin FROM korinsnici WHERE ime = @ime AND prezime = @prez AND email = @email";
+                string select_admin = "SELECT admin FROM korisnici WHERE ime = @ime AND prezime = @prez AND email = @email";
                 using var cmd_admin = new MySqlCommand(select_admin, conn_admin);
                 cmd_admin.Parameters.AddWithValue("@ime", ime);
                 cmd_admin.Parameters.AddWithValue("@prez", prez);
