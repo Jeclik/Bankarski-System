@@ -14,6 +14,11 @@ using MySql.Data.MySqlClient;
 
 public class Login
 {
+    public static string ime;
+    public static string prez;
+    public static string email;
+    public static string pass;
+
     public static void LoginClass()
     {
         //connection string
@@ -24,16 +29,16 @@ public class Login
         Console.WriteLine("Please Login: ");
 
         Console.Write("Name: ");
-        string ime = Console.ReadLine();
+        ime = Console.ReadLine();
 
         Console.Write("Last name: ");
-        string prez = Console.ReadLine();
+        prez = Console.ReadLine();
 
         Console.Write("Email: ");
-        string email = Console.ReadLine();
+        email = Console.ReadLine();
 
         Console.Write("Password: ");
-        string pass = Console.ReadLine();
+        pass = Console.ReadLine();
         Console.WriteLine("\n");
 
         //validation
