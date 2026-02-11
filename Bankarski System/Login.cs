@@ -45,6 +45,7 @@ public class Login
         if (string.IsNullOrWhiteSpace(ime) || string.IsNullOrWhiteSpace(prez) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(pass))
         {
             Console.WriteLine("All fields are required and cen't have a space in them!");
+            LoginClass();
         }
 
         //if all filds are filled, check in database
@@ -93,59 +94,10 @@ public class Login
                         switch (emp)
                         {
                             case "yes":
-                                Console.WriteLine("You are a employee thx for loging in.");
-
-                                try
-                                {
-                                    using var conn_role = new MySqlConnection(connection);
-                                    conn_role.Open();
-
-                                    string select_role = "SELECT role FROM employees WHERE ime = @ime AND prezime = @prez AND email = @email";
-                                    using var cmd_role = new MySqlCommand(select_role, conn);
-                                    cmd_role.Parameters.AddWithValue("@ime", ime);
-                                    cmd_role.Parameters.AddWithValue("@prez", prez);
-                                    cmd_role.Parameters.AddWithValue("@email", email);
-                                    object role_result = cmd_role.ExecuteScalar();
-                                    if (role_result == null || role_result == DBNull.Value)
-                                    {
-                                        Console.WriteLine("Could not retrieve employee role.");
-                                        break;
-                                    }
-
-                                    string role = role_result.ToString().Trim();
-                                    Console.WriteLine("Your role is: " + role);
-                                    switch (role)
-                                    {
-
-                                        case "teller":
-                                            Employees.Teller();
-                                            break;
-
-                                        case "representative":
-                                            Employees.Representative();
-                                            break;
-
-                                        case "clark":
-                                            Employees.Clark();
-                                            break;
-
-                                        case "assistmenager":
-                                            Employees.Assistant_Menager();
-                                            break;
-
-                                        case "menager":
-                                            Employees.Menager();
-                                            break;
-                                    }
-                                }
-                                catch (MySqlException ex)
-                                {
-                                    Console.WriteLine("Database error: " + ex.Message);
-                                }
+                                Employees.EmployeeClass();
                                 break;
 
                             case "no":
-                                Console.WriteLine("Welcome back out dear customer!");
                                 Customers.CustomerClass();
                                 break;
                         }
@@ -162,5 +114,6 @@ public class Login
         {
             Console.WriteLine("Database error: " + ex.Message);
         }
+
     }
 }

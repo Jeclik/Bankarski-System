@@ -31,6 +31,7 @@ public class Register
         if (string.IsNullOrWhiteSpace(ime) || string.IsNullOrWhiteSpace(prez) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(pass))
         {
             Console.WriteLine("All fields are required and cen't have a space it them!");
+            Registration();
         }
 
         //if all filds are filled, insertion to database

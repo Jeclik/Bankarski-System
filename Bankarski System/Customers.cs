@@ -12,6 +12,7 @@ class Customers
     {
         string connection = "server = 127.0.0.1; database = banka; user = root; password = ;";
 
+        Console.WriteLine("Welcome back out dear customer!");
         Console.WriteLine("What would you like to do?");
         Console.WriteLine("1.) Deposit");
         Console.WriteLine("2.) Check status");
