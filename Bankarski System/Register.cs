@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data;
 using MySql.Data.MySqlClient;
+using Mysqlx.Prepare;
 
 public class Register
 {
@@ -34,25 +35,49 @@ public class Register
             Registration();
         }
 
-        //if all filds are filled, insertion to database
+        //check if user already exists
         try
         {
             using var conn = new MySqlConnection(connection);
             conn.Open();
+            
+            string select = "SELECT * FROM korisnici WHERE email = @email";
+            using var cmd = new MySqlCommand(select, conn);
 
-            string insert = "INSERT INTO korisnici (ime, prezime, email, password, employee, admin) VALUES (@ime, @prez, @email, @pass, @emp, @admin)";
-            using var cmd = new MySqlCommand(insert, conn);
-
-            cmd.Parameters.AddWithValue("@ime", ime);
-            cmd.Parameters.AddWithValue("@prez", prez);
             cmd.Parameters.AddWithValue("@email", email);
-            cmd.Parameters.AddWithValue("@pass", pass);
-            cmd.Parameters.AddWithValue("@emp", emp);
-            cmd.Parameters.AddWithValue("@amind", admin);
-            cmd.ExecuteNonQuery();
 
-            Console.WriteLine("You have sucessfuly registrated.");
-            Login.LoginClass();
+            MySqlDataReader reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                Console.WriteLine("User already exist, please try again.");
+                Registration();
+            }
+            else
+            {
+                //if all filds are filled and user dosen't already exist, insertion to database
+                try
+                {
+                    conn.Open();
+
+                    string insert = "INSERT INTO korisnici (ime, prezime, email, password, employee, admin) VALUES (@ime, @prez, @email, @pass, @emp, @admin)";
+                    using var cmd_insert = new MySqlCommand(insert, conn);
+
+                    cmd_insert.Parameters.AddWithValue("@ime", ime);
+                    cmd_insert.Parameters.AddWithValue("@prez", prez);
+                    cmd_insert.Parameters.AddWithValue("@email", email);
+                    cmd_insert.Parameters.AddWithValue("@pass", pass);
+                    cmd_insert.Parameters.AddWithValue("@emp", emp);
+                    cmd_insert.Parameters.AddWithValue("@amind", admin);
+                    cmd_insert.ExecuteNonQuery();
+
+                    Console.WriteLine("You have sucessfuly registrated.");
+                    Login.LoginClass();
+                }
+                catch (MySqlException ex)
+                {
+                    Console.WriteLine("Database error: " + ex.Message);
+                }
+            }
         }
         catch (MySqlException ex)
         {
